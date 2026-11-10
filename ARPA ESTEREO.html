@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arpa Estereo - La Voz del Llano</title>
+    <style>
+        body {
+            background-color: #070504;
+            color: #f4e8d1;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Lienzo general de partículas en movimiento */
+        #particleCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 5;
+            pointer-events: none;
+        }
+
+        /* Tarjeta con fondo translúcido */
+        .player-card {
+            position: relative;
+            z-index: 2;
+            background: rgba(15, 11, 9, 0.4);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            border: 1px solid rgba(212, 175, 55, 0.5);
+            border-radius: 35px;
+            padding: 40px 30px;
+            width: 320px;
+            height: 520px;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.7), 0 0 25px rgba(212, 175, 55, 0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .card-title {
+            color: #d4af37;
+            font-size: 17px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin: 0;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+        }
+
+        /* Contenedor del logo ampliado */
+        .logo-container {
+            width: 220px;
+            height: 160px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0 auto;
+        }
+
+        .logo-container img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            display: block;
+            filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.8));
+        }
+
+        .sub-text {
+            color: #d4bc96;
+            font-size: 12px;
+            line-height: 1.5;
+            margin: 0;
+            padding: 0 10px;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+        }
+
+        .audio-container {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+        }
+
+        audio {
+            width: 90%;
+            height: 38px;
+            outline: none;
+            border-radius: 20px;
+            filter: sepia(20%) saturate(70%) brightness(90%);
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="particleCanvas"></canvas>
+
+    <div class="player-card">
+        <h2 class="card-title">¡LA VOZ DEL LLANO!</h2>
+
+        <div class="logo-container">
+            <img src="https://i.ibb.co/Kjv9nfR7/arrpa-logo-1-removebg-preview.png" alt="Logo Arpa Estereo">
+        </div>
+
+        <div>
+            <p class="sub-text">UNA EMISORA 24/7 CON MÚSICA LLANERA DE COLOMBIA Y VENEZUELA</p>
+        </div>
+
+        <div class="audio-container">
+            <audio controls autoplay>
+                <source src="http://morcast.caster.fm:16704/GJGVB" type="audio/mpeg">
+                Tu navegador no soporta el reproductor de audio.
+            </audio>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('particleCanvas');
+        const ctx = canvas.getContext('2d');
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        const particlesArray = [];
+        const numberOfParticles = 60;
+class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 2.2 + 0.8;
+                this.speedX = (Math.random() - 0.5) * 0.5;
+                this.speedY = (Math.random() - 0.5) * 0.5;
+                this.color = Math.random() > 0.2 ? '#d4af37' : '#fde08d';
+            }
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+
+                if (this.x < 0) this.x = canvas.width;
+                if (this.x > canvas.width) this.x = 0;
+                if (this.y < 0) this.y = canvas.height;
+                if (this.y > canvas.height) this.y = 0;
+            }
+            draw() {
+                ctx.fillStyle = this.color;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        function init() {
+            for (let i = 0; i < numberOfParticles; i++) {
+                particlesArray.push(new Particle());
+            }
+        }
+        init();
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particlesArray.forEach(particle => {
+                particle.update();
+                particle.draw();
+            });
+            requestAnimationFrame(animate);
+        }
+        animate();
+    </script>
+
+</body>
+</html>
